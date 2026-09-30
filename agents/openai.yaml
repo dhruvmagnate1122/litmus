@@ -1,0 +1,10 @@
+interface:
+  display_name: Product Quality Gate
+  short_description: Review security, SEO, performance, and conversion quality
+  default_prompt: Use $product-quality-gate to review this product and produce an evidence-backed launch-quality report.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  allow_implicit_invocation: true
