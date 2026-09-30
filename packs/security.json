@@ -1,33 +1,438 @@
 {
   "pack_version": "0.1.0",
   "pack": "security",
-  "status_model": ["PASS","FAIL","REVIEW","UNKNOWN","NOT_APPLICABLE"],
+  "display_name": "Application Security Baseline",
+  "maturity": "baseline",
+  "scope": "Web applications and APIs; not a full security certification.",
+  "reference_standard": "OWASP ASVS-oriented verification; OWASP Top 10:2025 used for risk coverage mapping, not claimed as complete coverage.",
   "checks": [
-    {"id":"SEC-AUTHZ","title":"Protect admin and privileged routes","evidence":["source","config","runtime"],"automation":"guided","notes":"Verify server-side authorization; UI hiding is insufficient."},
-    {"id":"SEC-SERVER-AUTH","title":"Server-side permission enforcement","evidence":["source","runtime"],"automation":"guided"},
-    {"id":"SEC-RLS","title":"Row-level or equivalent data isolation","evidence":["source","config","runtime"],"automation":"conditional","notes":"Only where datastore/access model makes it applicable; test cross-tenant access."},
-    {"id":"SEC-EMAIL","title":"Email verification where account risk requires it","evidence":["questionnaire","config","runtime"],"automation":"conditional"},
-    {"id":"SEC-PASSWORDS","title":"Secure password handling","evidence":["questionnaire","config"],"automation":"conditional","notes":"If auth is delegated, inspect provider configuration rather than searching for hashing code."},
-    {"id":"SEC-TOKENS","title":"Avoid exposing auth/session tokens to unsafe client storage","evidence":["source","config","runtime"],"automation":"guided","notes":"Review session architecture; do not reduce this to a simplistic localStorage regex."},
-    {"id":"SEC-SECRETS","title":"Server-side secret handling","evidence":["source","config"],"automation":"partial"},
-    {"id":"SEC-GITENV","title":"Keep environment secrets out of version control","evidence":["source","config"],"automation":"partial"},
-    {"id":"SEC-LOGS","title":"Keep sensitive data out of logs","evidence":["source","config","runtime"],"automation":"guided"},
-    {"id":"SEC-SQL","title":"Parameterized database queries","evidence":["source"],"automation":"partial"},
-    {"id":"SEC-INPUT","title":"Server-side input validation","evidence":["source","runtime"],"automation":"guided"},
-    {"id":"SEC-XSS","title":"Cross-site scripting defenses","evidence":["source","config","runtime"],"automation":"guided"},
-    {"id":"SEC-UPLOAD","title":"File upload validation","evidence":["source","config","runtime"],"automation":"guided"},
-    {"id":"SEC-WEBHOOK","title":"Webhook signature/authenticity verification","evidence":["source","config","runtime"],"automation":"conditional"},
-    {"id":"SEC-RATELIMIT","title":"Rate limiting/resource controls","evidence":["config","runtime"],"automation":"guided"},
-    {"id":"SEC-CORS","title":"Restrictive CORS configuration","evidence":["source","config","runtime"],"automation":"partial","notes":"Wildcard is not always a vulnerability for public unauthenticated resources."},
-    {"id":"SEC-DEBUG","title":"Production debug/error disclosure disabled","evidence":["source","config","runtime"],"automation":"partial"},
-    {"id":"SEC-DEPS","title":"Dependency vulnerability/patch review","evidence":["config","runtime"],"automation":"guided"},
-    {"id":"SEC-REVIEW","title":"Independent security/SAST review","evidence":["config"],"automation":"manual","notes":"Tool/vendor agnostic; not Claude-specific."}
+    {
+      "id": "SEC-AUTHZ",
+      "title": "Object/action authorization and privileged-route enforcement",
+      "severity": "critical",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A01:2025"
+      ],
+      "next_step": "Test direct object/action access across roles/tenants; UI hiding is not authorization."
+    },
+    {
+      "id": "SEC-RLS",
+      "title": "Row-level or equivalent tenant/data isolation where applicable",
+      "severity": "critical",
+      "automation": "conditional",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A01:2025"
+      ],
+      "next_step": "Use synthetic cross-tenant tests; mark NOT_APPLICABLE with rationale when the data model does not require row-level isolation."
+    },
+    {
+      "id": "SEC-SSRF",
+      "title": "Outbound request / SSRF controls for user-influenced destinations",
+      "severity": "high",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A01:2025"
+      ],
+      "next_step": "Review URL allowlists, DNS/IP handling, redirects, metadata/internal-network protections and egress policy."
+    },
+    {
+      "id": "SEC-CORS",
+      "title": "CORS matches intended browser trust boundaries",
+      "severity": "medium",
+      "automation": "partial",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A02:2025"
+      ],
+      "next_step": "Test allowed/disallowed origins on endpoints where browser cross-origin access matters; wildcard is not automatically a vulnerability for public unauthenticated resources."
+    },
+    {
+      "id": "SEC-HEADERS",
+      "title": "Relevant browser security headers configured",
+      "severity": "medium",
+      "automation": "guided",
+      "evidence": [
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A02:2025"
+      ],
+      "next_step": "Review CSP, frame-ancestors/X-Frame-Options, HSTS where HTTPS is established, MIME sniffing and referrer policy as applicable."
+    },
+    {
+      "id": "SEC-DEBUG",
+      "title": "Production debug and sensitive error disclosure disabled",
+      "severity": "high",
+      "automation": "partial",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A02:2025",
+        "A10:2025"
+      ],
+      "next_step": "Exercise representative failures and inspect production-like responses/logs."
+    },
+    {
+      "id": "SEC-STORAGE-EXPOSURE",
+      "title": "Cloud/object/database storage exposure reviewed",
+      "severity": "critical",
+      "automation": "guided",
+      "evidence": [
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A02:2025"
+      ],
+      "next_step": "Verify public/private policies, bucket/container/database grants and anonymous access."
+    },
+    {
+      "id": "SEC-SUPPLYCHAIN",
+      "title": "Dependency and build-supply-chain review",
+      "severity": "high",
+      "automation": "external",
+      "evidence": [
+        "config",
+        "external"
+      ],
+      "owasp": [
+        "A03:2025"
+      ],
+      "next_step": "Use ecosystem/SCA tooling or an approved advisory feed; the offline core cannot determine current CVEs."
+    },
+    {
+      "id": "SEC-LOCK-INTEGRITY",
+      "title": "Lockfiles, registries and build artifact provenance",
+      "severity": "medium",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "config"
+      ],
+      "owasp": [
+        "A03:2025",
+        "A08:2025"
+      ],
+      "next_step": "Review lockfiles, trusted registries, CI permissions, dependency pinning and artifact integrity/signing where warranted."
+    },
+    {
+      "id": "SEC-CRYPTO",
+      "title": "Cryptography and key-management controls",
+      "severity": "high",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A04:2025"
+      ],
+      "next_step": "Review transport security, at-rest protection where required, approved algorithms, key storage/rotation and misuse of home-grown crypto."
+    },
+    {
+      "id": "SEC-PASSWORDS",
+      "title": "Password storage and verification where passwords are handled directly",
+      "severity": "critical",
+      "automation": "conditional",
+      "evidence": [
+        "questionnaire",
+        "config"
+      ],
+      "owasp": [
+        "A04:2025",
+        "A07:2025"
+      ],
+      "next_step": "If delegated to an identity provider, inspect provider controls; otherwise verify modern password hashing and parameters."
+    },
+    {
+      "id": "SEC-SECRETS",
+      "title": "Secrets and private credentials stay server-side and out of source",
+      "severity": "critical",
+      "automation": "partial",
+      "evidence": [
+        "source",
+        "config"
+      ],
+      "owasp": [
+        "A02:2025",
+        "A04:2025"
+      ],
+      "next_step": "Review repository, client bundles, deployment config and rotation/revocation process."
+    },
+    {
+      "id": "SEC-INJECTION",
+      "title": "Injection-safe command/query/template construction",
+      "severity": "critical",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "runtime"
+      ],
+      "owasp": [
+        "A05:2025"
+      ],
+      "next_step": "Review SQL/NoSQL/command/template/header/path contexts; parameterization is one control, not the whole category."
+    },
+    {
+      "id": "SEC-INPUT",
+      "title": "Server-side input validation for trust-boundary inputs",
+      "severity": "high",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "runtime"
+      ],
+      "owasp": [
+        "A05:2025"
+      ],
+      "next_step": "Validate type, range, length, format and business constraints on the server."
+    },
+    {
+      "id": "SEC-XSS",
+      "title": "Context-appropriate XSS defenses",
+      "severity": "high",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A05:2025"
+      ],
+      "next_step": "Review framework escaping, dangerous HTML sinks, sanitization and CSP/Trusted Types where appropriate."
+    },
+    {
+      "id": "SEC-CSRF",
+      "title": "CSRF protections for cookie-authenticated state changes where applicable",
+      "severity": "high",
+      "automation": "conditional",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A01:2025",
+        "A05:2025"
+      ],
+      "next_step": "Verify SameSite strategy and anti-CSRF defenses for relevant flows; token-only non-cookie APIs may be NOT_APPLICABLE."
+    },
+    {
+      "id": "SEC-THREATMODEL",
+      "title": "Threat model / abuse-case review",
+      "severity": "high",
+      "automation": "manual",
+      "evidence": [
+        "questionnaire",
+        "manual"
+      ],
+      "owasp": [
+        "A06:2025"
+      ],
+      "next_step": "Document assets, trust boundaries, abuse cases, privileged operations and likely attacker paths."
+    },
+    {
+      "id": "SEC-RATELIMIT",
+      "title": "Abuse, resource and rate controls on sensitive/expensive endpoints",
+      "severity": "high",
+      "automation": "guided",
+      "evidence": [
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A06:2025"
+      ],
+      "next_step": "Test bounded bursts on auth, messaging, expensive AI/search, upload and other abuse-prone operations."
+    },
+    {
+      "id": "SEC-AUTHN",
+      "title": "Authentication flow, brute-force and account-enumeration controls",
+      "severity": "high",
+      "automation": "guided",
+      "evidence": [
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A07:2025"
+      ],
+      "next_step": "Review login, lockout/rate control, enumeration, re-authentication and provider settings."
+    },
+    {
+      "id": "SEC-SESSION",
+      "title": "Session/token lifecycle and cookie protections",
+      "severity": "critical",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A07:2025"
+      ],
+      "next_step": "Verify HttpOnly/Secure/SameSite where cookies are used, rotation, expiry, revocation/logout, fixation resistance and unsafe client storage."
+    },
+    {
+      "id": "SEC-MFA",
+      "title": "MFA or step-up authentication where risk warrants it",
+      "severity": "medium",
+      "automation": "conditional",
+      "evidence": [
+        "questionnaire",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A07:2025"
+      ],
+      "next_step": "Apply to privileged/high-risk actions based on threat model; otherwise document NOT_APPLICABLE."
+    },
+    {
+      "id": "SEC-RECOVERY",
+      "title": "Account recovery and identity-change flows",
+      "severity": "high",
+      "automation": "guided",
+      "evidence": [
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A07:2025"
+      ],
+      "next_step": "Test reset tokens, expiry, enumeration resistance, email/identity changes and session invalidation."
+    },
+    {
+      "id": "SEC-WEBHOOK",
+      "title": "Webhook/message authenticity and replay handling",
+      "severity": "high",
+      "automation": "conditional",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A08:2025"
+      ],
+      "next_step": "Verify signatures/authenticity, timestamp/replay handling and idempotency for inbound trusted events."
+    },
+    {
+      "id": "SEC-DATA-INTEGRITY",
+      "title": "Untrusted serialized/data artifacts are integrity-checked before privileged use",
+      "severity": "high",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A08:2025"
+      ],
+      "next_step": "Review deserialization, signed artifacts, updates, imported config/data and trust-boundary transitions."
+    },
+    {
+      "id": "SEC-LOG-SAFE",
+      "title": "Secrets and unnecessary sensitive data are excluded/redacted from logs",
+      "severity": "high",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A09:2025"
+      ],
+      "next_step": "Inspect representative application, proxy and provider logs."
+    },
+    {
+      "id": "SEC-LOG-ALERT",
+      "title": "Security-relevant events are logged and actionable alerts exist",
+      "severity": "medium",
+      "automation": "guided",
+      "evidence": [
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A09:2025"
+      ],
+      "next_step": "Verify auth/privilege/security events, retention, tamper resistance, alert routing and response ownership."
+    },
+    {
+      "id": "SEC-EXCEPTIONS",
+      "title": "Exceptional conditions fail safely",
+      "severity": "high",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "runtime"
+      ],
+      "owasp": [
+        "A10:2025"
+      ],
+      "next_step": "Test malformed inputs, dependency failures, partial transactions, timeouts, retries and fail-open/fail-closed behavior."
+    },
+    {
+      "id": "SEC-UPLOAD",
+      "title": "File upload validation and safe serving",
+      "severity": "high",
+      "automation": "conditional",
+      "evidence": [
+        "source",
+        "config",
+        "runtime"
+      ],
+      "owasp": [
+        "A02:2025",
+        "A05:2025"
+      ],
+      "next_step": "Validate type/content, size, names, storage location, malware workflow if relevant and response headers."
+    },
+    {
+      "id": "SEC-REVIEW",
+      "title": "Independent security review / SAST / targeted testing",
+      "severity": "medium",
+      "automation": "manual",
+      "evidence": [
+        "manual"
+      ],
+      "owasp": [],
+      "next_step": "Record scope, tool/reviewer, date and unresolved findings; this is process evidence, not a substitute for the controls above."
+    }
   ],
   "sources": [
-    "https://cheatsheetseries.owasp.org/cheatsheets/Secure_Code_Review_Cheat_Sheet.html",
-    "https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html",
-    "https://cheatsheetseries.owasp.org/cheatsheets/Query_Parameterization_Cheat_Sheet.html",
-    "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html",
-    "https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html"
+    "https://top10.owasp.org/2025/",
+    "https://top10.owasp.org/2025/0x03_2025-Establishing_a_Modern_Application_Security_Program/",
+    "https://owasp.org/www-project-application-security-verification-standard/"
   ]
 }
