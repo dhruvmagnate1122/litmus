@@ -1,0 +1,25 @@
+{
+  "pack_version": "0.1.0",
+  "pack": "conversion-copy",
+  "status_model": ["PASS","FAIL","REVIEW","UNKNOWN","NOT_APPLICABLE","SUGGESTION","CLAIM_NEEDS_EVIDENCE"],
+  "checks": [
+    {"id":"COPY-SCANNABLE","title":"Copy is scannable","mode":"heuristic"},
+    {"id":"COPY-SECTION","title":"One primary idea per section","mode":"heuristic"},
+    {"id":"COPY-HEADLINE","title":"Specific headlines","mode":"heuristic"},
+    {"id":"COPY-SUPPORT","title":"Body supports the headline promise","mode":"heuristic"},
+    {"id":"COPY-BENEFIT","title":"Benefits are clear before or alongside features","mode":"heuristic"},
+    {"id":"COPY-CTA","title":"CTA communicates action and outcome","mode":"heuristic"},
+    {"id":"COPY-OBJECTIONS","title":"Material objections addressed before key CTA","mode":"heuristic"},
+    {"id":"COPY-PROOF","title":"Material claims have nearby proof/evidence","mode":"evidence"},
+    {"id":"COPY-CLAIMS","title":"No fabricated or unsupported factual claims","mode":"evidence"},
+    {"id":"COPY-BUYER","title":"Copy speaks to a defined buyer/audience","mode":"questionnaire"},
+    {"id":"COPY-ABOVEFOLD","title":"Above-the-fold value proposition is clear","mode":"heuristic"},
+    {"id":"COPY-GENERIC","title":"Avoid generic openings when they weaken clarity","mode":"suggestion"},
+    {"id":"COPY-BULLETS","title":"Limit dense bullet overload","mode":"suggestion"},
+    {"id":"COPY-PADDING","title":"Remove needless padding","mode":"suggestion"},
+    {"id":"COPY-EMDASH","title":"Em-dash usage","mode":"style-preference","notes":"Never a hard failure by itself."},
+    {"id":"COPY-APHORISM","title":"Aphorism/formula usage","mode":"style-preference","notes":"Never a hard failure by itself."},
+    {"id":"COPY-ANTITHESIS","title":"Antithesis/two-beat phrasing","mode":"style-preference","notes":"Never a hard failure by itself."}
+  ],
+  "sources": []
+}
