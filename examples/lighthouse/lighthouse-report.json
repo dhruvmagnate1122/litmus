@@ -1,0 +1,19 @@
+{
+  "lighthouseVersion": "12.2.0",
+  "fetchTime": "2026-09-30T12:20:00.000Z",
+  "requestedUrl": "https://example.com/",
+  "finalDisplayedUrl": "https://example.com/",
+  "configSettings": {
+    "formFactor": "mobile",
+    "throttlingMethod": "simulate"
+  },
+  "audits": {
+    "largest-contentful-paint": { "id": "largest-contentful-paint", "numericValue": 2900 },
+    "cumulative-layout-shift": { "id": "cumulative-layout-shift", "numericValue": 0.05 },
+    "total-blocking-time": { "id": "total-blocking-time", "numericValue": 350 },
+    "bootup-time": { "id": "bootup-time", "numericValue": 1200 },
+    "long-tasks": { "id": "long-tasks", "details": { "items": [{ "duration": 180 }, { "duration": 95 }] } },
+    "network-requests": { "id": "network-requests", "details": { "items": [{}, {}, {}, {}] } },
+    "third-party-summary": { "id": "third-party-summary", "details": { "items": [{ "entity": "Example Analytics" }] } }
+  }
+}
