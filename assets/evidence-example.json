@@ -1,30 +1,56 @@
 {
-  "SEC-CORS": [
+  "SEC-SESSION": [
     {
       "type": "config",
       "result": "PASS",
-      "details": "Allowed origins limited to documented frontends."
-    }
-  ],
-  "SEO-HTTPS": [
+      "details": "Session cookie is HttpOnly, Secure and SameSite=Lax.",
+      "observed_at": "2026-09-30T12:00:00Z",
+      "environment": "staging",
+      "producer": {
+        "kind": "manual",
+        "name": "reviewer"
+      },
+      "artifact": "session-config-review"
+    },
     {
       "type": "runtime",
       "result": "PASS",
-      "details": "HTTP redirects to HTTPS; certificate valid in test."
+      "details": "Logout invalidated the test session and old cookie was rejected.",
+      "observed_at": "2026-09-30T12:10:00Z",
+      "environment": "staging",
+      "producer": {
+        "kind": "tool",
+        "name": "browser-test"
+      },
+      "artifact": "run-42"
     }
   ],
-  "PERF-AUDIT": [
+  "PERF-CWV": [
     {
       "type": "runtime",
       "result": "REVIEW",
-      "details": "Mobile LCP exceeded project budget in test run."
+      "details": "Mobile lab LCP 2.9s; field data unavailable.",
+      "observed_at": "2026-09-30T12:20:00Z",
+      "environment": "staging",
+      "producer": {
+        "kind": "external",
+        "name": "Lighthouse"
+      },
+      "artifact": "lh-report-42"
     }
   ],
   "COPY-CLAIMS": [
     {
-      "type": "evidence",
+      "type": "manual",
       "result": "CLAIM_NEEDS_EVIDENCE",
-      "details": "Homepage claim lacks cited product evidence."
+      "details": "Homepage 'cuts review time by 80%' lacks supporting experiment/data.",
+      "observed_at": "2026-09-30T12:30:00Z",
+      "environment": "content-review",
+      "producer": {
+        "kind": "manual",
+        "name": "copy-reviewer"
+      },
+      "artifact": "homepage-v3"
     }
   ]
 }
