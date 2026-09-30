@@ -1,31 +1,225 @@
 {
   "pack_version": "0.1.0",
   "pack": "seo",
-  "status_model": ["PASS","FAIL","REVIEW","UNKNOWN","NOT_APPLICABLE"],
+  "display_name": "Technical Discoverability",
+  "maturity": "baseline",
+  "scope": "Technical crawl/index/render discoverability for public web content. Search operations are manual/external.",
+  "shared_dependencies": {
+    "performance": [
+      "PERF-CWV",
+      "PERF-IMAGE-BUDGET"
+    ],
+    "platform": [
+      "SEO-HTTPS"
+    ]
+  },
   "checks": [
-    {"id":"SEO-INDEX","title":"No accidental noindex on indexable pages","evidence":["source","runtime"],"automation":"partial"},
-    {"id":"SEO-ROBOTS","title":"robots.txt exists and matches crawl intent","evidence":["source","runtime"],"automation":"guided"},
-    {"id":"SEO-SITEMAP","title":"Sitemap available where useful","evidence":["source","runtime"],"automation":"guided"},
-    {"id":"SEO-CANONICAL","title":"Canonical URLs are appropriate","evidence":["source","runtime"],"automation":"guided"},
-    {"id":"SEO-TITLE","title":"Specific page titles","evidence":["source","runtime"],"automation":"partial"},
-    {"id":"SEO-DESCRIPTION","title":"Useful meta descriptions","evidence":["source","runtime"],"automation":"partial"},
-    {"id":"SEO-HEADINGS","title":"Clear primary heading and sensible hierarchy","evidence":["source","runtime"],"automation":"heuristic"},
-    {"id":"SEO-ALT","title":"Meaningful image alt text where needed","evidence":["source","runtime"],"automation":"heuristic"},
-    {"id":"SEO-SCHEMA","title":"Relevant structured data validates","evidence":["source","runtime"],"automation":"conditional"},
-    {"id":"SEO-INTERNAL","title":"Internal links support discoverability","evidence":["runtime"],"automation":"guided"},
-    {"id":"SEO-BROKEN","title":"No material broken internal links","evidence":["runtime"],"automation":"guided"},
-    {"id":"SEO-IMAGES","title":"Images reasonably optimized","evidence":["runtime"],"automation":"guided"},
-    {"id":"SEO-CWV","title":"Core Web Vitals measured","evidence":["runtime"],"automation":"guided"},
-    {"id":"SEO-MOBILE","title":"Mobile usability checked","evidence":["runtime"],"automation":"guided"},
-    {"id":"SEO-HTTPS","title":"HTTPS enforced","evidence":["runtime","config"],"automation":"guided"},
-    {"id":"SEO-URLS","title":"Stable readable URL structure","evidence":["source","runtime"],"automation":"heuristic"},
-    {"id":"SEO-OG","title":"Social preview metadata where relevant","evidence":["source","runtime"],"automation":"conditional"},
-    {"id":"SEO-GSC","title":"Search Console/ownership evidence","evidence":["config"],"automation":"manual"},
-    {"id":"SEO-BACKLINKS","title":"External authority/backlink strategy","evidence":["questionnaire"],"automation":"manual"},
-    {"id":"SEO-LLMS-TXT","title":"llms.txt","evidence":[],"automation":"optional","notes":"Optional/experimental. Google says it is not needed and does not affect Google Search visibility/rankings."}
+    {
+      "id": "SEO-INDEX",
+      "title": "Intended indexable pages are not accidentally blocked/noindexed",
+      "severity": "high",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "runtime"
+      ],
+      "next_step": "Check meta/X-Robots-Tag, auth/staging gates and representative deployed routes."
+    },
+    {
+      "id": "SEO-ROBOTS",
+      "title": "robots.txt matches crawl intent",
+      "severity": "medium",
+      "automation": "guided",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Fetch deployed robots.txt and confirm it does not accidentally block intended content."
+    },
+    {
+      "id": "SEO-SITEMAP",
+      "title": "Sitemap is valid/current where useful",
+      "severity": "low",
+      "automation": "conditional",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Validate XML/URLs/freshness if the site benefits from a sitemap; otherwise NOT_APPLICABLE."
+    },
+    {
+      "id": "SEO-CANONICAL",
+      "title": "Canonicalization is coherent where duplicate URLs exist",
+      "severity": "medium",
+      "automation": "conditional",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Check duplicate/parameterized routes, redirects, internal links and declared canonicals; canonical tags are hints, not universally mandatory."
+    },
+    {
+      "id": "SEO-STATUS",
+      "title": "HTTP status codes and redirect chains reflect page intent",
+      "severity": "high",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Crawl representative routes for 2xx/3xx/4xx/5xx, loops and excessive chains."
+    },
+    {
+      "id": "SEO-RENDER",
+      "title": "Primary indexable content is available in rendered output",
+      "severity": "high",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Compare initial/rendered HTML for JS-heavy routes and ensure critical content/links are discoverable."
+    },
+    {
+      "id": "SEO-TITLE",
+      "title": "Page titles are unique/useful for important indexable pages",
+      "severity": "medium",
+      "automation": "guided",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Inspect representative route templates and duplicates."
+    },
+    {
+      "id": "SEO-DESCRIPTION",
+      "title": "Meta descriptions are present/useful where worthwhile",
+      "severity": "low",
+      "automation": "heuristic",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Treat as snippet-quality guidance, not an indexing/ranking requirement."
+    },
+    {
+      "id": "SEO-HEADINGS",
+      "title": "Heading structure supports content comprehension",
+      "severity": "low",
+      "automation": "heuristic",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Review hierarchy and semantics; do not enforce one-H1 folklore as a hard rule."
+    },
+    {
+      "id": "SEO-ALT",
+      "title": "Meaningful images have appropriate alternative text",
+      "severity": "low",
+      "automation": "heuristic",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Decorative images may have empty alt; this is primarily accessibility/content semantics."
+    },
+    {
+      "id": "SEO-SCHEMA",
+      "title": "Relevant structured data is valid and matches visible content",
+      "severity": "medium",
+      "automation": "conditional",
+      "evidence": [
+        "runtime",
+        "external"
+      ],
+      "next_step": "Validate only eligible schema types and record validator/result."
+    },
+    {
+      "id": "SEO-INTERNAL",
+      "title": "Important pages are discoverable through internal links",
+      "severity": "medium",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Crawl for orphan/weakly linked pages and navigation paths."
+    },
+    {
+      "id": "SEO-BROKEN",
+      "title": "Material internal links resolve correctly",
+      "severity": "medium",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Crawl representative internal links and classify intentional/non-indexable destinations."
+    },
+    {
+      "id": "SEO-DUPLICATES",
+      "title": "Duplicate/thin/faceted URL behavior is controlled",
+      "severity": "medium",
+      "automation": "guided",
+      "evidence": [
+        "questionnaire",
+        "runtime"
+      ],
+      "next_step": "Review parameter/facet/search pages, duplicate content, soft-404 patterns and canonical/indexing strategy."
+    },
+    {
+      "id": "SEO-HREFLANG",
+      "title": "International targeting/hreflang is correct where applicable",
+      "severity": "medium",
+      "automation": "conditional",
+      "evidence": [
+        "questionnaire",
+        "runtime"
+      ],
+      "next_step": "Check reciprocal/valid language-region annotations only for multilingual/multiregional sites."
+    },
+    {
+      "id": "SEO-MIGRATION",
+      "title": "Redirect/indexing plan exists for URL/site migrations",
+      "severity": "high",
+      "automation": "conditional",
+      "evidence": [
+        "questionnaire",
+        "runtime"
+      ],
+      "next_step": "Apply only when URLs/domains/platform are changing."
+    },
+    {
+      "id": "SEO-HTTPS",
+      "title": "HTTPS and canonical host behavior are correct",
+      "severity": "high",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Treat as shared platform prerequisite; SEO consumes this result rather than owning transport security."
+    },
+    {
+      "id": "SEO-GSC",
+      "title": "Search Console/ownership and indexing diagnostics",
+      "severity": "info",
+      "automation": "manual-external",
+      "evidence": [
+        "external"
+      ],
+      "next_step": "Optional search-operations evidence; not part of local automated scope."
+    },
+    {
+      "id": "SEO-BACKLINKS",
+      "title": "External authority/backlink analysis",
+      "severity": "info",
+      "automation": "manual-external",
+      "evidence": [
+        "external"
+      ],
+      "next_step": "Optional off-site marketing/search-operations evidence; not a local code-quality check."
+    },
+    {
+      "id": "SEO-LLMS-TXT",
+      "title": "llms.txt",
+      "severity": "info",
+      "automation": "experimental-optional",
+      "evidence": [],
+      "next_step": "Optional/experimental. Absence is never a Google Search failure or ranking penalty."
+    }
   ],
   "sources": [
-    "https://developers.google.com/search/updates",
-    "https://developers.google.com/search/docs"
+    "https://developers.google.com/search/docs",
+    "https://developers.google.com/search/updates"
   ]
 }
