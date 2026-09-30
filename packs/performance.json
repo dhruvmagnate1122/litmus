@@ -1,0 +1,28 @@
+{
+  "pack_version": "0.1.0",
+  "pack": "performance",
+  "status_model": ["PASS","FAIL","REVIEW","UNKNOWN","NOT_APPLICABLE"],
+  "checks": [
+    {"id":"PERF-API-CACHE","title":"Cache safe/reusable API responses where beneficial","evidence":["config","runtime"],"automation":"conditional"},
+    {"id":"PERF-LOAD-BALANCER","title":"Load balancing/scaling mechanism","evidence":["questionnaire","config"],"automation":"conditional","notes":"Often provider-managed or NOT_APPLICABLE."},
+    {"id":"PERF-DB-INDEX","title":"Database indexes support measured query patterns","evidence":["config","runtime"],"automation":"guided"},
+    {"id":"PERF-IMAGES","title":"Compress/resize images appropriately","evidence":["source","runtime"],"automation":"guided"},
+    {"id":"PERF-SKELETON","title":"Loading states for slow user-visible work","evidence":["source","runtime"],"automation":"heuristic"},
+    {"id":"PERF-QUERY-CACHE","title":"Cache expensive queries where safe","evidence":["config","runtime"],"automation":"conditional"},
+    {"id":"PERF-N1","title":"N+1 query review","evidence":["source","runtime"],"automation":"guided"},
+    {"id":"PERF-DEBOUNCE","title":"Debounce/throttle high-frequency handlers where useful","evidence":["source","runtime"],"automation":"conditional"},
+    {"id":"PERF-CHUNKS","title":"Code splitting for large client bundles","evidence":["source","runtime"],"automation":"conditional"},
+    {"id":"PERF-CDN","title":"Static asset/content delivery strategy","evidence":["config","runtime"],"automation":"conditional","notes":"May be provider-managed."},
+    {"id":"PERF-SERVER-CACHE","title":"Server-side caching where correct and safe","evidence":["config","runtime"],"automation":"conditional"},
+    {"id":"PERF-PAGINATION","title":"Bound large result sets","evidence":["source","runtime"],"automation":"conditional"},
+    {"id":"PERF-AUDIT","title":"Performance audit evidence","evidence":["runtime"],"automation":"guided"},
+    {"id":"PERF-PAYLOAD","title":"API payload size/compression review","evidence":["config","runtime"],"automation":"guided"},
+    {"id":"PERF-RERENDER","title":"Unnecessary client re-render review","evidence":["runtime"],"automation":"conditional"},
+    {"id":"PERF-MINIFY","title":"Production JS/CSS minification","evidence":["config","runtime"],"automation":"guided"},
+    {"id":"PERF-LAZY","title":"Lazy load appropriate offscreen/non-critical resources","evidence":["source","runtime"],"automation":"conditional"},
+    {"id":"PERF-DEFER","title":"Defer non-critical scripts/resources","evidence":["source","runtime"],"automation":"conditional"},
+    {"id":"PERF-UNUSED-DEPS","title":"Unused dependency review","evidence":["source","config"],"automation":"guided"},
+    {"id":"PERF-POOL","title":"Database connection pooling strategy","evidence":["questionnaire","config","runtime"],"automation":"conditional","notes":"May be provider-managed or unnecessary for some serverless architectures."}
+  ],
+  "sources": ["https://web.dev/learn/performance/"]
+}
