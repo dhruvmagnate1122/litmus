@@ -4,7 +4,7 @@
 
 Evidence JSON is user/tool supplied and therefore not self-authenticating. The core validates shape, dates and required fields, then exposes provenance.
 
-Required fields per record: `type`, `result`, `details`, `observed_at`, `environment`, `producer.kind`, `producer.name`, and `artifact`.
+Required fields per record: `type`, `result`, `details`, `observed_at`, `environment`, `producer.kind`, and `producer.name`, plus at least one reproducible pointer using either `artifact` or `reference`.
 
 Accepted producer kinds: `tool`, `external`, `manual`.
 
