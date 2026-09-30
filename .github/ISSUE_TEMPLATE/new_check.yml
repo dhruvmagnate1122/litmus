@@ -1,0 +1,53 @@
+name: Propose a new check
+description: Propose a rule, pack item, or evidence adapter
+title: "[check] "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: pack
+    attributes:
+      label: Pack
+      options:
+        - Application Security Baseline
+        - Technical Discoverability
+        - Web Performance
+        - Conversion Copy Review
+        - New pack proposal
+    validations:
+      required: true
+  - type: input
+    id: title
+    attributes:
+      label: Proposed check
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why this belongs in a quality gate
+    validations:
+      required: true
+  - type: dropdown
+    id: automation
+    attributes:
+      label: Best verification mode
+      options:
+        - Static candidate
+        - Config
+        - Runtime
+        - External tool
+        - Manual/human
+        - Mixed
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Required evidence and false-positive risks
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: References
+      description: Prefer authoritative/primary sources where relevant.
