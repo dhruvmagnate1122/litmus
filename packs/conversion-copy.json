@@ -1,25 +1,203 @@
 {
   "pack_version": "0.1.0",
   "pack": "conversion-copy",
-  "status_model": ["PASS","FAIL","REVIEW","UNKNOWN","NOT_APPLICABLE","SUGGESTION","CLAIM_NEEDS_EVIDENCE"],
+  "display_name": "Conversion Copy Review",
+  "maturity": "guided",
+  "scope": "Guided human review with machine assistance. Only claim-integrity items can hard-fail; stylistic items are suggestions.",
   "checks": [
-    {"id":"COPY-SCANNABLE","title":"Copy is scannable","mode":"heuristic"},
-    {"id":"COPY-SECTION","title":"One primary idea per section","mode":"heuristic"},
-    {"id":"COPY-HEADLINE","title":"Specific headlines","mode":"heuristic"},
-    {"id":"COPY-SUPPORT","title":"Body supports the headline promise","mode":"heuristic"},
-    {"id":"COPY-BENEFIT","title":"Benefits are clear before or alongside features","mode":"heuristic"},
-    {"id":"COPY-CTA","title":"CTA communicates action and outcome","mode":"heuristic"},
-    {"id":"COPY-OBJECTIONS","title":"Material objections addressed before key CTA","mode":"heuristic"},
-    {"id":"COPY-PROOF","title":"Material claims have nearby proof/evidence","mode":"evidence"},
-    {"id":"COPY-CLAIMS","title":"No fabricated or unsupported factual claims","mode":"evidence"},
-    {"id":"COPY-BUYER","title":"Copy speaks to a defined buyer/audience","mode":"questionnaire"},
-    {"id":"COPY-ABOVEFOLD","title":"Above-the-fold value proposition is clear","mode":"heuristic"},
-    {"id":"COPY-GENERIC","title":"Avoid generic openings when they weaken clarity","mode":"suggestion"},
-    {"id":"COPY-BULLETS","title":"Limit dense bullet overload","mode":"suggestion"},
-    {"id":"COPY-PADDING","title":"Remove needless padding","mode":"suggestion"},
-    {"id":"COPY-EMDASH","title":"Em-dash usage","mode":"style-preference","notes":"Never a hard failure by itself."},
-    {"id":"COPY-APHORISM","title":"Aphorism/formula usage","mode":"style-preference","notes":"Never a hard failure by itself."},
-    {"id":"COPY-ANTITHESIS","title":"Antithesis/two-beat phrasing","mode":"style-preference","notes":"Never a hard failure by itself."}
+    {
+      "id": "COPY-CLAIMS",
+      "category": "claim-integrity",
+      "title": "Material factual claims are supportable",
+      "severity": "high",
+      "automation": "guided-human",
+      "evidence": [
+        "manual"
+      ],
+      "next_step": "Link each material claim to product data, customer evidence, test results or another defensible source; otherwise CLAIM_NEEDS_EVIDENCE."
+    },
+    {
+      "id": "COPY-PROOF",
+      "category": "claim-integrity",
+      "title": "Proof quality and proximity match the claim",
+      "severity": "medium",
+      "automation": "guided-human",
+      "evidence": [
+        "manual"
+      ],
+      "next_step": "Review whether evidence actually supports the specific claim and is placed where users need it."
+    },
+    {
+      "id": "COPY-OFFER",
+      "category": "conversion-heuristic",
+      "title": "Offer/value proposition is understandable",
+      "severity": "medium",
+      "automation": "guided-human",
+      "evidence": [
+        "manual"
+      ],
+      "next_step": "State audience, problem/value, product and key commitment clearly."
+    },
+    {
+      "id": "COPY-BUYER",
+      "category": "conversion-heuristic",
+      "title": "Copy addresses a defined audience/use case",
+      "severity": "medium",
+      "automation": "guided-human",
+      "evidence": [
+        "questionnaire",
+        "manual"
+      ],
+      "next_step": "Compare page copy to the documented buyer/use case."
+    },
+    {
+      "id": "COPY-HEADLINE",
+      "category": "conversion-heuristic",
+      "title": "Headline is specific enough to set the right expectation",
+      "severity": "low",
+      "automation": "guided-human",
+      "evidence": [
+        "manual"
+      ],
+      "next_step": "Assess specificity and relevance in context; no fixed headline-length rule."
+    },
+    {
+      "id": "COPY-SUPPORT",
+      "category": "conversion-heuristic",
+      "title": "Body supports the headline promise",
+      "severity": "medium",
+      "automation": "guided-human",
+      "evidence": [
+        "manual"
+      ],
+      "next_step": "Check message continuity and whether the body substantiates the promise."
+    },
+    {
+      "id": "COPY-BENEFIT",
+      "category": "conversion-heuristic",
+      "title": "Benefits and outcomes are clear alongside features",
+      "severity": "low",
+      "automation": "guided-human",
+      "evidence": [
+        "manual"
+      ],
+      "next_step": "Reframe feature-only sections when the user outcome is unclear."
+    },
+    {
+      "id": "COPY-CTA",
+      "category": "conversion-heuristic",
+      "title": "Primary CTA communicates the next action and expected outcome",
+      "severity": "medium",
+      "automation": "guided-human",
+      "evidence": [
+        "manual"
+      ],
+      "next_step": "Review CTA label, surrounding context and destination continuity."
+    },
+    {
+      "id": "COPY-FRICTION",
+      "category": "conversion-heuristic",
+      "title": "Signup/purchase friction and commitment are clear",
+      "severity": "medium",
+      "automation": "guided-human",
+      "evidence": [
+        "manual",
+        "runtime"
+      ],
+      "next_step": "Review forms, steps, pricing/commitment disclosure and unnecessary friction."
+    },
+    {
+      "id": "COPY-OBJECTIONS",
+      "category": "conversion-heuristic",
+      "title": "Material buyer objections are addressed",
+      "severity": "low",
+      "automation": "guided-human",
+      "evidence": [
+        "questionnaire",
+        "manual"
+      ],
+      "next_step": "Tie objections to actual research/support/sales evidence where available."
+    },
+    {
+      "id": "COPY-ABOVEFOLD",
+      "category": "conversion-heuristic",
+      "title": "Above-the-fold context makes the product/value clear",
+      "severity": "low",
+      "automation": "guided-human",
+      "evidence": [
+        "manual",
+        "runtime"
+      ],
+      "next_step": "Review representative viewport(s), not a fixed pixel rule."
+    },
+    {
+      "id": "COPY-SCANNABLE",
+      "category": "conversion-heuristic",
+      "title": "Long-form copy is scannable",
+      "severity": "low",
+      "automation": "guided-human",
+      "evidence": [
+        "manual"
+      ],
+      "next_step": "Review headings, paragraphs, lists and visual hierarchy."
+    },
+    {
+      "id": "COPY-STATES",
+      "category": "conversion-heuristic",
+      "title": "Critical form/error/success states use clear action-oriented copy",
+      "severity": "low",
+      "automation": "guided-human",
+      "evidence": [
+        "runtime",
+        "manual"
+      ],
+      "next_step": "Review key transaction and recovery states."
+    },
+    {
+      "id": "COPY-GENERIC",
+      "category": "style-suggestion",
+      "title": "Generic opening language",
+      "severity": "info",
+      "automation": "suggestion-only",
+      "evidence": [],
+      "next_step": "Suggest edits only when generic language weakens clarity."
+    },
+    {
+      "id": "COPY-PADDING",
+      "category": "style-suggestion",
+      "title": "Needless padding/repetition",
+      "severity": "info",
+      "automation": "suggestion-only",
+      "evidence": [],
+      "next_step": "Suggestion only."
+    },
+    {
+      "id": "COPY-EMDASH",
+      "category": "style-suggestion",
+      "title": "Em-dash usage",
+      "severity": "info",
+      "automation": "suggestion-only",
+      "evidence": [],
+      "next_step": "Pure style preference; never a failure."
+    },
+    {
+      "id": "COPY-APHORISM",
+      "category": "style-suggestion",
+      "title": "Aphorism/formula usage",
+      "severity": "info",
+      "automation": "suggestion-only",
+      "evidence": [],
+      "next_step": "Pure style preference; never a failure."
+    },
+    {
+      "id": "COPY-ANTITHESIS",
+      "category": "style-suggestion",
+      "title": "Antithesis/two-beat phrasing",
+      "severity": "info",
+      "automation": "suggestion-only",
+      "evidence": [],
+      "next_step": "Pure style preference; never a failure."
+    }
   ],
   "sources": []
 }
