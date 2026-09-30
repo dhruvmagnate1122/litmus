@@ -1,8 +1,73 @@
 # Litmus — Product Quality Gate
 
-A reusable coding-agent skill and lightweight Python triage engine for **web applications and public web experiences** across four launch-quality areas: application-security baseline, technical discoverability, web performance, and conversion copy.
+**One command to review a web app before launch across security, technical SEO, performance, and conversion quality — without pretending regex equals proof.**
 
-**Version 0.1.0 — evidence-driven review, not certification.** Static patterns are candidate signals only. A clean scan does **not** mean a product is secure, fast, rankable, or persuasive. Most meaningful `PASS` results require configuration, runtime, external-tool, or human evidence.
+Litmus is an open-source coding-agent skill plus lightweight Python triage engine. It finds conservative source candidates, then uses configuration, runtime, external-tool, and human evidence to decide what is actually verified.
+
+> **A clean scan is not an all-clear.** Static findings are candidates, most meaningful passes require evidence, and Litmus never claims security certification, ranking guarantees, performance guarantees, or conversion lift.
+
+## See the shape of a Litmus report
+
+```text
+LITMUS RELEASE DECISION: NEEDS_REVIEW
+
+RELEASE BLOCKERS
+  none
+
+REQUIRED REVIEW
+  [HIGH] SEC-DEBUG
+    Static candidate: production debug setting detected
+    Verification: static-candidate
+    Next: verify deployed configuration and error behavior
+
+UNKNOWNS
+  [HIGH] PERF-CWV
+    Runtime measurement not supplied
+    Next: measure representative routes and record lab/field context
+
+VERIFIED
+  [HIGH] SEO-INDEX
+    Status: PASS
+    Verification: tool/external-attested
+```
+
+Litmus is deliberately not a green-checkmark generator. It separates **status**, **severity**, and **verification strength**, preserves conflicting evidence, and surfaces a release decision with blockers, required review, unknowns, deferred work, and suggestions.
+
+## Try it
+
+```sh
+git clone https://github.com/dhruvmagnate1122/litmus.git
+cd litmus
+python3 scripts/check.py /absolute/path/to/your-web-app
+```
+
+Add project facts and evidence when you have them:
+
+```sh
+python3 scripts/check.py /absolute/path/to/your-web-app \
+  --profile /path/to/project-profile.json \
+  --evidence /path/to/evidence.json
+```
+
+No third-party Python packages are required for the core triage/status engine.
+
+## Why Litmus instead of another checklist?
+
+| Plain checklist | Regex-only scanner | Litmus |
+|---|---|---|
+| Easy to forget or cargo-cult | Fast but noisy | Static candidates + evidence |
+| No provenance | Often treats presence as proof | Provenance and verification level |
+| All failures look alike | Usually tool-specific severity | Status + severity kept separate |
+| Little path from finding to decision | Findings stop at detection | Next-step evidence + release summary |
+| Hard to extend consistently | Rules live in code | Versioned packs + contribution surface |
+
+## Contribute a pack, adapter, or rule
+
+Litmus is intentionally extensible. Useful contributions include framework adapters, runtime-evidence collectors, better static candidates, false-positive reductions, and domain packs.
+
+Start with [CONTRIBUTING.md](CONTRIBUTING.md), the [roadmap](ROADMAP.md), or one of the repository's `good first issue` tasks.
+
+A minimal example project and evidence fixture live under [examples/minimal-web-app](examples/minimal-web-app).
 
 ## What the gate actually decides
 
