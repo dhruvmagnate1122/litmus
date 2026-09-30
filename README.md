@@ -36,7 +36,7 @@ Litmus does not manufacture a single green “all clear.”
 - `observed_at`
 - `environment`
 - `producer.kind` (`tool`, `external`, or `manual`) and `producer.name`
-- `artifact` or another reproducible reference
+- either `artifact` or `reference` — a reproducible pointer to the supporting evidence
 
 The core validates structure and adjudicates conflicts; it **cannot cryptographically prove that user-supplied evidence is honest**. Reports therefore expose evidence provenance and verification level.
 
