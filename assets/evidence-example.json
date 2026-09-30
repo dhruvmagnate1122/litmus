@@ -1,0 +1,30 @@
+{
+  "SEC-CORS": [
+    {
+      "type": "config",
+      "result": "PASS",
+      "details": "Allowed origins limited to documented frontends."
+    }
+  ],
+  "SEO-HTTPS": [
+    {
+      "type": "runtime",
+      "result": "PASS",
+      "details": "HTTP redirects to HTTPS; certificate valid in test."
+    }
+  ],
+  "PERF-AUDIT": [
+    {
+      "type": "runtime",
+      "result": "REVIEW",
+      "details": "Mobile LCP exceeded project budget in test run."
+    }
+  ],
+  "COPY-CLAIMS": [
+    {
+      "type": "evidence",
+      "result": "CLAIM_NEEDS_EVIDENCE",
+      "details": "Homepage claim lacks cited product evidence."
+    }
+  ]
+}
