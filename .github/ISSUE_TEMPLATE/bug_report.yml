@@ -1,0 +1,27 @@
+name: Bug report
+description: Report incorrect behavior in Litmus
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include the command and the smallest reproducible case.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: fixture
+    attributes:
+      label: Reproduction / fixture
+      description: Do not include real credentials or sensitive data.
+  - type: input
+    id: version
+    attributes:
+      label: Litmus version / commit
