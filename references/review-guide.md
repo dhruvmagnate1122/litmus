@@ -1,23 +1,42 @@
 # Review guide
 
-## Evidence
+## Evidence contract
 
-Use `source`, `config`, `questionnaire`, `runtime`, and `evidence`. Engineering `PASS` requires declared evidence types where applicable. `FAIL` means an observed technical/behavioral expectation failed. `REVIEW` is ambiguous/candidate evidence. `UNKNOWN` means evidence is missing. `NOT_APPLICABLE` needs a rationale.
+Evidence JSON is user/tool supplied and therefore not self-authenticating. The core validates shape, dates and required fields, then exposes provenance.
 
-For copy, use `CLAIM_NEEDS_EVIDENCE` for unsupported factual marketing claims and `SUGGESTION` for subjective style changes.
+Required fields per record: `type`, `result`, `details`, `observed_at`, `environment`, `producer.kind`, `producer.name`, and `artifact`.
+
+Accepted producer kinds: `tool`, `external`, `manual`.
+
+Conflict handling:
+- any `FAIL` evidence => `FAIL`;
+- `REVIEW` or contradictory PASS/FAIL signals => `REVIEW` unless FAIL is present;
+- source candidates remain recorded;
+- a source candidate can be resolved to `PASS` only when all evidence types required by that rule pass;
+- missing required evidence => `UNKNOWN`, or `REVIEW` if a static candidate exists.
+
+Evidence freshness is surfaced; the core does not decide universal expiration because acceptable age depends on deployment/change cadence. Agents/reviewers should reject stale evidence after material changes.
+
+## Release decision
+
+Default blockers: `FAIL` with severity `critical` or `high`.
+Required review: unresolved `REVIEW` with severity `critical` or `high`.
+Unknowns must be resolved, explicitly accepted/deferred, or marked `NOT_APPLICABLE` with rationale.
 
 ## Security
 
-Use authorized test environments and synthetic data. Test privileged routes by direct API/resource access, data isolation with cross-tenant synthetic users, allowed/disallowed CORS origins, upload type/size/content/storage behavior, valid/invalid webhook signatures, bounded rate-limit tests, production error handling, and representative logs for secrets/tokens/sensitive data.
+Use authorized test environments and synthetic data. Map coverage to OWASP Top 10:2025 but use ASVS-style verifiable requirements. Review direct object/action authorization, session/cookie lifecycle, SSRF/egress, CSRF where applicable, security headers, cloud/storage exposure, cryptography/key lifecycle, injection contexts, auth/recovery, supply-chain integrity, webhook/data integrity, security logging/alerting and exceptional-condition behavior. Current CVE conclusions require external/SCA evidence.
 
-## SEO
+## Technical discoverability
 
-Fetch robots, sitemap and metadata from the deployed environment; crawl representative routes for indexability and broken links; validate structured data only when relevant; measure Core Web Vitals with documented device/network context; verify HTTPS behavior. Search Console and backlinks are external/manual evidence. `llms.txt` is optional and its absence is not a Google SEO failure.
+Separate crawlability, indexability and renderability. Test deployed status codes/redirects, robots/meta directives, canonical behavior where duplicates exist, rendered content/links, internal links/orphans, broken links, structured data, duplicates/facets, hreflang/migrations where applicable. Search Console/backlinks are external/manual.
 
 ## Performance
 
-Measure before prescribing. Use query logs/profiling for indexes/N+1, validate cache correctness and invalidation, inspect bundles/long tasks/re-renders, review image dimensions/formats/compression/loading, and determine whether pooling/load balancing/CDN are already provider-managed or unnecessary.
+Start with numeric/runtime evidence. Record lab vs field data, page/journey, device/network profile, percentile/sample size where applicable. Default CWV good references: LCP <= 2500ms, INP <= 200ms, CLS <= 0.1 at the 75th percentile. Projects may define stricter budgets.
+
+Only diagnose caching, indexes/N+1, code splitting, lazy loading, re-renders or infrastructure after measurements identify a need. Source patterns are hints only.
 
 ## Conversion copy
 
-Separate claims from style. Material claims need defensible evidence. CTA/headline/benefit/objection checks are heuristics. Em dashes, aphorisms and antithesis are stylistic choices, never automatic failures.
+Guided human review with machine assistance. Claim integrity requires evidence. Conversion heuristics need context from buyer/use case and page/journey. Style items are suggestions only.
