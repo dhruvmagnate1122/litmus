@@ -1,28 +1,204 @@
 {
   "pack_version": "0.1.0",
   "pack": "performance",
-  "status_model": ["PASS","FAIL","REVIEW","UNKNOWN","NOT_APPLICABLE"],
+  "display_name": "Web Performance",
+  "maturity": "experimental",
+  "scope": "Measurement-first web performance. Numeric/runtime outcomes are gates; implementation techniques are diagnostics.",
   "checks": [
-    {"id":"PERF-API-CACHE","title":"Cache safe/reusable API responses where beneficial","evidence":["config","runtime"],"automation":"conditional"},
-    {"id":"PERF-LOAD-BALANCER","title":"Load balancing/scaling mechanism","evidence":["questionnaire","config"],"automation":"conditional","notes":"Often provider-managed or NOT_APPLICABLE."},
-    {"id":"PERF-DB-INDEX","title":"Database indexes support measured query patterns","evidence":["config","runtime"],"automation":"guided"},
-    {"id":"PERF-IMAGES","title":"Compress/resize images appropriately","evidence":["source","runtime"],"automation":"guided"},
-    {"id":"PERF-SKELETON","title":"Loading states for slow user-visible work","evidence":["source","runtime"],"automation":"heuristic"},
-    {"id":"PERF-QUERY-CACHE","title":"Cache expensive queries where safe","evidence":["config","runtime"],"automation":"conditional"},
-    {"id":"PERF-N1","title":"N+1 query review","evidence":["source","runtime"],"automation":"guided"},
-    {"id":"PERF-DEBOUNCE","title":"Debounce/throttle high-frequency handlers where useful","evidence":["source","runtime"],"automation":"conditional"},
-    {"id":"PERF-CHUNKS","title":"Code splitting for large client bundles","evidence":["source","runtime"],"automation":"conditional"},
-    {"id":"PERF-CDN","title":"Static asset/content delivery strategy","evidence":["config","runtime"],"automation":"conditional","notes":"May be provider-managed."},
-    {"id":"PERF-SERVER-CACHE","title":"Server-side caching where correct and safe","evidence":["config","runtime"],"automation":"conditional"},
-    {"id":"PERF-PAGINATION","title":"Bound large result sets","evidence":["source","runtime"],"automation":"conditional"},
-    {"id":"PERF-AUDIT","title":"Performance audit evidence","evidence":["runtime"],"automation":"guided"},
-    {"id":"PERF-PAYLOAD","title":"API payload size/compression review","evidence":["config","runtime"],"automation":"guided"},
-    {"id":"PERF-RERENDER","title":"Unnecessary client re-render review","evidence":["runtime"],"automation":"conditional"},
-    {"id":"PERF-MINIFY","title":"Production JS/CSS minification","evidence":["config","runtime"],"automation":"guided"},
-    {"id":"PERF-LAZY","title":"Lazy load appropriate offscreen/non-critical resources","evidence":["source","runtime"],"automation":"conditional"},
-    {"id":"PERF-DEFER","title":"Defer non-critical scripts/resources","evidence":["source","runtime"],"automation":"conditional"},
-    {"id":"PERF-UNUSED-DEPS","title":"Unused dependency review","evidence":["source","config"],"automation":"guided"},
-    {"id":"PERF-POOL","title":"Database connection pooling strategy","evidence":["questionnaire","config","runtime"],"automation":"conditional","notes":"May be provider-managed or unnecessary for some serverless architectures."}
+    {
+      "id": "PERF-CWV",
+      "title": "Core Web Vitals budget",
+      "severity": "high",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "budget": {
+        "lcp_ms_good_max": 2500,
+        "inp_ms_good_max": 200,
+        "cls_good_max": 0.1,
+        "assessment_percentile": 75
+      },
+      "next_step": "Measure representative pages; prefer field data when available and record lab vs field context."
+    },
+    {
+      "id": "PERF-JS-BUDGET",
+      "title": "JavaScript transfer/execution budget",
+      "severity": "medium",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Record compressed transfer size and main-thread cost against a project-defined budget."
+    },
+    {
+      "id": "PERF-IMAGE-BUDGET",
+      "title": "Image dimensions/formats/weight budget",
+      "severity": "medium",
+      "automation": "static+runtime",
+      "evidence": [
+        "source",
+        "runtime"
+      ],
+      "next_step": "Check oversized repository assets plus delivered dimensions/formats/compression."
+    },
+    {
+      "id": "PERF-FONT",
+      "title": "Font-loading strategy and payload",
+      "severity": "medium",
+      "automation": "guided",
+      "evidence": [
+        "source",
+        "runtime"
+      ],
+      "next_step": "Review font count/subsets/preload/display behavior and render-blocking impact."
+    },
+    {
+      "id": "PERF-THIRD-PARTY",
+      "title": "Third-party script cost",
+      "severity": "high",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Inventory third-party scripts and measure transfer/main-thread/network impact."
+    },
+    {
+      "id": "PERF-LONGTASKS",
+      "title": "Long tasks / main-thread blocking",
+      "severity": "high",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Profile representative interactions and identify long tasks/CPU hotspots."
+    },
+    {
+      "id": "PERF-API-LATENCY",
+      "title": "Critical API latency budget",
+      "severity": "high",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Record representative percentile latency and environment/load context."
+    },
+    {
+      "id": "PERF-DB-LATENCY",
+      "title": "Database/query latency budget",
+      "severity": "high",
+      "automation": "conditional",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Use query/profiling evidence for data-backed products; NOT_APPLICABLE for static/no-database products."
+    },
+    {
+      "id": "PERF-COLDSTART",
+      "title": "Cold-start/startup latency where applicable",
+      "severity": "medium",
+      "automation": "conditional",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Measure provider/runtime cold behavior if the deployment model has cold starts."
+    },
+    {
+      "id": "PERF-REGRESSION",
+      "title": "Performance regression against an agreed baseline/budget",
+      "severity": "high",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Compare the current release to the prior accepted baseline with the same methodology."
+    },
+    {
+      "id": "PERF-PAYLOAD",
+      "title": "Critical API/document payload budget",
+      "severity": "medium",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Measure compressed/uncompressed payloads and unnecessary over-fetching."
+    },
+    {
+      "id": "PERF-REQUESTS",
+      "title": "Request count/waterfall review on key journeys",
+      "severity": "medium",
+      "automation": "runtime",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Measure critical page/journey waterfalls and blocking dependencies."
+    },
+    {
+      "id": "PERF-CACHE",
+      "title": "Cache correctness/effectiveness diagnostic",
+      "severity": "medium",
+      "automation": "conditional-diagnostic",
+      "evidence": [
+        "config",
+        "runtime"
+      ],
+      "next_step": "Only prescribe caching after a measured need; verify personalization boundaries, invalidation and cache hit behavior."
+    },
+    {
+      "id": "PERF-DB-INDEX",
+      "title": "Database index/query-plan diagnostic",
+      "severity": "medium",
+      "automation": "conditional-diagnostic",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Use actual query plans/profiling; source pattern checks alone cannot prove an index is missing."
+    },
+    {
+      "id": "PERF-N1",
+      "title": "N+1 query diagnostic",
+      "severity": "medium",
+      "automation": "conditional-diagnostic",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Use query traces/profiling; do not infer PASS/FAIL from grep."
+    },
+    {
+      "id": "PERF-RENDER",
+      "title": "Client render/hydration/re-render diagnostic",
+      "severity": "medium",
+      "automation": "conditional-diagnostic",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Profile only for client-rendered apps and record measured render cost."
+    },
+    {
+      "id": "PERF-CODESPLIT",
+      "title": "Code-splitting/lazy-loading diagnostic",
+      "severity": "low",
+      "automation": "conditional-diagnostic",
+      "evidence": [
+        "runtime"
+      ],
+      "next_step": "Recommend only when bundle/route measurements show benefit."
+    },
+    {
+      "id": "PERF-INFRA",
+      "title": "Provider-managed CDN/pooling/load-balancing architecture review",
+      "severity": "info",
+      "automation": "manual-conditional",
+      "evidence": [
+        "questionnaire",
+        "config"
+      ],
+      "next_step": "Architecture note only; usually NOT_APPLICABLE or provider-managed and never a baseline failure by itself."
+    }
   ],
-  "sources": ["https://web.dev/learn/performance/"]
+  "sources": [
+    "https://web.dev/vitals/",
+    "https://web.dev/articles/defining-core-web-vitals-thresholds",
+    "https://web.dev/learn/performance/"
+  ]
 }
