@@ -26,6 +26,12 @@ class Tests(unittest.TestCase):
     self.assertIn(r['severity'],{'critical','high','medium','low','info'});self.assertTrue(r.get('next_step'))
  def test_evidence_requires_provenance(self):
   with self.assertRaises(ValueError): validate_evidence({'X':[{'type':'runtime','result':'PASS'}]})
+ def test_evidence_accepts_reference_alias(self):
+  item=ev('runtime','PASS'); item['reference']=item.pop('artifact')
+  self.assertEqual(validate_evidence({'X':[item]})['X'][0]['reference'],'fixture')
+ def test_evidence_requires_artifact_or_reference(self):
+  item=ev('runtime','PASS'); item.pop('artifact')
+  with self.assertRaises(ValueError): validate_evidence({'X':[item]})
  def test_pass_needs_all_types(self):
   rule={'id':'X','evidence':['source','runtime']}
   self.assertEqual(derive(rule,[ev('source','PASS')])[0],'UNKNOWN')
