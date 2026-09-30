@@ -1,0 +1,31 @@
+{
+  "pack_version": "0.1.0",
+  "pack": "seo",
+  "status_model": ["PASS","FAIL","REVIEW","UNKNOWN","NOT_APPLICABLE"],
+  "checks": [
+    {"id":"SEO-INDEX","title":"No accidental noindex on indexable pages","evidence":["source","runtime"],"automation":"partial"},
+    {"id":"SEO-ROBOTS","title":"robots.txt exists and matches crawl intent","evidence":["source","runtime"],"automation":"guided"},
+    {"id":"SEO-SITEMAP","title":"Sitemap available where useful","evidence":["source","runtime"],"automation":"guided"},
+    {"id":"SEO-CANONICAL","title":"Canonical URLs are appropriate","evidence":["source","runtime"],"automation":"guided"},
+    {"id":"SEO-TITLE","title":"Specific page titles","evidence":["source","runtime"],"automation":"partial"},
+    {"id":"SEO-DESCRIPTION","title":"Useful meta descriptions","evidence":["source","runtime"],"automation":"partial"},
+    {"id":"SEO-HEADINGS","title":"Clear primary heading and sensible hierarchy","evidence":["source","runtime"],"automation":"heuristic"},
+    {"id":"SEO-ALT","title":"Meaningful image alt text where needed","evidence":["source","runtime"],"automation":"heuristic"},
+    {"id":"SEO-SCHEMA","title":"Relevant structured data validates","evidence":["source","runtime"],"automation":"conditional"},
+    {"id":"SEO-INTERNAL","title":"Internal links support discoverability","evidence":["runtime"],"automation":"guided"},
+    {"id":"SEO-BROKEN","title":"No material broken internal links","evidence":["runtime"],"automation":"guided"},
+    {"id":"SEO-IMAGES","title":"Images reasonably optimized","evidence":["runtime"],"automation":"guided"},
+    {"id":"SEO-CWV","title":"Core Web Vitals measured","evidence":["runtime"],"automation":"guided"},
+    {"id":"SEO-MOBILE","title":"Mobile usability checked","evidence":["runtime"],"automation":"guided"},
+    {"id":"SEO-HTTPS","title":"HTTPS enforced","evidence":["runtime","config"],"automation":"guided"},
+    {"id":"SEO-URLS","title":"Stable readable URL structure","evidence":["source","runtime"],"automation":"heuristic"},
+    {"id":"SEO-OG","title":"Social preview metadata where relevant","evidence":["source","runtime"],"automation":"conditional"},
+    {"id":"SEO-GSC","title":"Search Console/ownership evidence","evidence":["config"],"automation":"manual"},
+    {"id":"SEO-BACKLINKS","title":"External authority/backlink strategy","evidence":["questionnaire"],"automation":"manual"},
+    {"id":"SEO-LLMS-TXT","title":"llms.txt","evidence":[],"automation":"optional","notes":"Optional/experimental. Google says it is not needed and does not affect Google Search visibility/rankings."}
+  ],
+  "sources": [
+    "https://developers.google.com/search/updates",
+    "https://developers.google.com/search/docs"
+  ]
+}
