@@ -63,8 +63,12 @@ def validate_evidence(evidence):
         if not isinstance(items,list): raise ValueError("Evidence records must be arrays")
         for item in items:
             if not isinstance(item,dict): raise ValueError("Evidence record must be an object")
-            for k in ("type","result","details","observed_at","environment","producer","artifact"):
+            for k in ("type","result","details","observed_at","environment","producer"):
                 if k not in item: raise ValueError("Evidence record missing "+k)
+            artifact=item.get("artifact")
+            reference=item.get("reference")
+            if not ((isinstance(artifact,str) and artifact.strip()) or (isinstance(reference,str) and reference.strip())):
+                raise ValueError("Evidence record requires artifact or reference")
             if str(item["result"]).upper() not in allowed_results: raise ValueError("Invalid evidence result")
             prod=item["producer"]
             if not isinstance(prod,dict) or prod.get("kind") not in allowed_kinds or not prod.get("name"):
