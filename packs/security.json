@@ -1,0 +1,33 @@
+{
+  "pack_version": "0.1.0",
+  "pack": "security",
+  "status_model": ["PASS","FAIL","REVIEW","UNKNOWN","NOT_APPLICABLE"],
+  "checks": [
+    {"id":"SEC-AUTHZ","title":"Protect admin and privileged routes","evidence":["source","config","runtime"],"automation":"guided","notes":"Verify server-side authorization; UI hiding is insufficient."},
+    {"id":"SEC-SERVER-AUTH","title":"Server-side permission enforcement","evidence":["source","runtime"],"automation":"guided"},
+    {"id":"SEC-RLS","title":"Row-level or equivalent data isolation","evidence":["source","config","runtime"],"automation":"conditional","notes":"Only where datastore/access model makes it applicable; test cross-tenant access."},
+    {"id":"SEC-EMAIL","title":"Email verification where account risk requires it","evidence":["questionnaire","config","runtime"],"automation":"conditional"},
+    {"id":"SEC-PASSWORDS","title":"Secure password handling","evidence":["questionnaire","config"],"automation":"conditional","notes":"If auth is delegated, inspect provider configuration rather than searching for hashing code."},
+    {"id":"SEC-TOKENS","title":"Avoid exposing auth/session tokens to unsafe client storage","evidence":["source","config","runtime"],"automation":"guided","notes":"Review session architecture; do not reduce this to a simplistic localStorage regex."},
+    {"id":"SEC-SECRETS","title":"Server-side secret handling","evidence":["source","config"],"automation":"partial"},
+    {"id":"SEC-GITENV","title":"Keep environment secrets out of version control","evidence":["source","config"],"automation":"partial"},
+    {"id":"SEC-LOGS","title":"Keep sensitive data out of logs","evidence":["source","config","runtime"],"automation":"guided"},
+    {"id":"SEC-SQL","title":"Parameterized database queries","evidence":["source"],"automation":"partial"},
+    {"id":"SEC-INPUT","title":"Server-side input validation","evidence":["source","runtime"],"automation":"guided"},
+    {"id":"SEC-XSS","title":"Cross-site scripting defenses","evidence":["source","config","runtime"],"automation":"guided"},
+    {"id":"SEC-UPLOAD","title":"File upload validation","evidence":["source","config","runtime"],"automation":"guided"},
+    {"id":"SEC-WEBHOOK","title":"Webhook signature/authenticity verification","evidence":["source","config","runtime"],"automation":"conditional"},
+    {"id":"SEC-RATELIMIT","title":"Rate limiting/resource controls","evidence":["config","runtime"],"automation":"guided"},
+    {"id":"SEC-CORS","title":"Restrictive CORS configuration","evidence":["source","config","runtime"],"automation":"partial","notes":"Wildcard is not always a vulnerability for public unauthenticated resources."},
+    {"id":"SEC-DEBUG","title":"Production debug/error disclosure disabled","evidence":["source","config","runtime"],"automation":"partial"},
+    {"id":"SEC-DEPS","title":"Dependency vulnerability/patch review","evidence":["config","runtime"],"automation":"guided"},
+    {"id":"SEC-REVIEW","title":"Independent security/SAST review","evidence":["config"],"automation":"manual","notes":"Tool/vendor agnostic; not Claude-specific."}
+  ],
+  "sources": [
+    "https://cheatsheetseries.owasp.org/cheatsheets/Secure_Code_Review_Cheat_Sheet.html",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Query_Parameterization_Cheat_Sheet.html",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html",
+    "https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html"
+  ]
+}
