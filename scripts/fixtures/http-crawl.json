@@ -1,0 +1,132 @@
+{
+  "routes": {
+    "/ok": {
+      "status": 200,
+      "body": "<h1>Public page</h1>"
+    },
+    "/old": {
+      "status": 301,
+      "headers": {
+        "Location": "/moved"
+      }
+    },
+    "/moved": {
+      "status": 302,
+      "headers": {
+        "Location": "/ok"
+      }
+    },
+    "/loop": {
+      "status": 302,
+      "headers": {
+        "Location": "/loop"
+      }
+    },
+    "/meta-noindex": {
+      "status": 200,
+      "body": "<meta name=\"robots\" content=\"noindex\">"
+    },
+    "/header-noindex": {
+      "status": 200,
+      "headers": {
+        "X-Robots-Tag": "noindex"
+      }
+    },
+    "/robots.txt": {
+      "status": 200,
+      "body": "User-agent: *\nDisallow: /private\n"
+    },
+    "/private": {
+      "status": 200,
+      "body": "Private page"
+    },
+    "/duplicate": {
+      "status": 200,
+      "body": "<link rel=\"canonical\" href=\"/ok\">"
+    },
+    "/bad-canonical": {
+      "status": 200,
+      "body": "<link rel=\"canonical\" href=\"/missing\">"
+    },
+    "/links": {
+      "status": 200,
+      "body": "<a href=\"/ok\">Good</a><a href=\"/missing\">Broken</a>"
+    },
+    "/missing": {
+      "status": 404,
+      "body": "Not found"
+    },
+    "/error": {
+      "status": 500,
+      "body": "Server error"
+    }
+  },
+  "cases": [
+    {
+      "id": "redirect",
+      "path": "/old",
+      "check": "SEO-STATUS",
+      "expected": "PASS"
+    },
+    {
+      "id": "loop",
+      "path": "/loop",
+      "check": "SEO-STATUS",
+      "expected": "FAIL"
+    },
+    {
+      "id": "error",
+      "path": "/error",
+      "check": "SEO-STATUS",
+      "expected": "FAIL"
+    },
+    {
+      "id": "indexable",
+      "path": "/ok",
+      "check": "SEO-INDEX",
+      "expected": "PASS"
+    },
+    {
+      "id": "meta-noindex",
+      "path": "/meta-noindex",
+      "check": "SEO-INDEX",
+      "expected": "FAIL"
+    },
+    {
+      "id": "header-noindex",
+      "path": "/header-noindex",
+      "check": "SEO-INDEX",
+      "expected": "FAIL"
+    },
+    {
+      "id": "robots-allowed",
+      "path": "/ok",
+      "check": "SEO-ROBOTS",
+      "expected": "PASS"
+    },
+    {
+      "id": "robots-blocked",
+      "path": "/private",
+      "check": "SEO-ROBOTS",
+      "expected": "FAIL"
+    },
+    {
+      "id": "canonical",
+      "path": "/duplicate",
+      "check": "SEO-CANONICAL",
+      "expected": "PASS"
+    },
+    {
+      "id": "bad-canonical",
+      "path": "/bad-canonical",
+      "check": "SEO-CANONICAL",
+      "expected": "FAIL"
+    },
+    {
+      "id": "broken-link",
+      "path": "/links",
+      "check": "SEO-BROKEN",
+      "expected": "FAIL"
+    }
+  ]
+}
