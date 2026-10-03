@@ -69,6 +69,11 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md), the [roadmap](ROADMAP.md), or one
 
 A minimal example project and evidence fixture live under [examples/minimal-web-app](examples/minimal-web-app).
 
+The [deterministic HTTP crawl fixture](docs/http-crawl-fixture.md) exercises
+Technical Discoverability evidence entirely on loopback. Run
+`python3 scripts/test_http_crawl.py` for redirect, noindex, robots, canonical,
+and broken-link cases.
+
 ## What the gate actually decides
 
 Litmus separates three dimensions:
