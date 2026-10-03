@@ -5,7 +5,7 @@ Lighthouse measures one synthetic page load (lab data). Lab results are recorded
 as REVIEW: a human decides what they mean for real users. Field data (CrUX p75)
 is only recorded when the input is a PageSpeed Insights response that includes it.
 """
-import argparse, json, sys
+import argparse, json, math, sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -21,9 +21,17 @@ def cwv_budget():
     return rule["budget"]
 
 
+def metric(value):
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
+        raise ValueError("Metric must be a finite non-negative number")
+    return value
+
+
 def numeric(audits, audit_id):
     value = audits.get(audit_id, {}).get("numericValue")
-    return value if isinstance(value, (int, float)) else None
+    return metric(value)
 
 
 def lab_record(details, context):
@@ -80,9 +88,9 @@ def lab_related(audits):
 
 def field_cwv(field, budget, context):
     metrics = (field or {}).get("metrics") or {}
-    lcp = metrics.get("LARGEST_CONTENTFUL_PAINT_MS", {}).get("percentile")
-    inp = metrics.get("INTERACTION_TO_NEXT_PAINT", {}).get("percentile")
-    cls_raw = metrics.get("CUMULATIVE_LAYOUT_SHIFT_SCORE", {}).get("percentile")
+    lcp = metric(metrics.get("LARGEST_CONTENTFUL_PAINT_MS", {}).get("percentile"))
+    inp = metric(metrics.get("INTERACTION_TO_NEXT_PAINT", {}).get("percentile"))
+    cls_raw = metric(metrics.get("CUMULATIVE_LAYOUT_SHIFT_SCORE", {}).get("percentile"))
     if lcp is None and inp is None and cls_raw is None:
         return None
     cls = cls_raw / 100 if cls_raw is not None else None
@@ -101,7 +109,7 @@ def field_cwv(field, budget, context):
         "result": "PASS" if within else "REVIEW",
         "details": " ".join(parts) + " Collection period and page/origin scope come from CrUX.",
         "observed_at": context["observed_at"],
-        "environment": "field: Chrome UX Report p75, %s" % context["form_factor"],
+        "environment": "field: Chrome UX Report p75; scope=%s; device not supplied by loadingExperience" % field.get("id", "unknown"),
         "producer": {"kind": "external", "name": "Chrome UX Report via PageSpeed Insights"},
         "reference": context["reference"],
     }
@@ -163,3 +171,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+

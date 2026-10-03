@@ -26,3 +26,6 @@ Every record carries the Lighthouse version (`producer`), `fetchTime` (`observed
 - A Lighthouse report is **lab data**: one synthetic page load. Lab records are always `REVIEW`, even when within budget, because a single lab run does not prove production performance. INP cannot be measured in a lab run.
 - If the input is a PageSpeed Insights API response with `loadingExperience`, the importer adds a separate **field** record for `PERF-CWV` from the Chrome UX Report p75 values. It is `PASS` only when LCP, INP and CLS are all present and within the pack budget; otherwise `REVIEW`.
 - Because the lab record stays `REVIEW`, `PERF-CWV` remains `REVIEW` until a human resolves it.
+
+
+Invalid metric values (booleans, negative or non-finite numbers, and strings) are rejected. Field scope uses loadingExperience.id when supplied; the lab device and run timestamp do not establish the field collection device or period. Consult the referenced report/CrUX data for those details.

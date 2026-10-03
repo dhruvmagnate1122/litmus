@@ -97,4 +97,21 @@ class LighthouseImportTests(unittest.TestCase):
   with self.assertRaises(ValueError): import_report({'foo':1},'r')
  def test_fixture_is_sanitized(self):
   self.assertEqual(self.report['requestedUrl'],'https://example.com/')
+ def test_invalid_field_metrics_rejected(self):
+  for value in [-1, False, True, float('nan'), float('inf'), '100']:
+   for key in ['LARGEST_CONTENTFUL_PAINT_MS','INTERACTION_TO_NEXT_PAINT','CUMULATIVE_LAYOUT_SHIFT_SCORE']:
+    with self.subTest(value=value,key=key):
+     field={'metrics':{key:{'percentile':value}}}
+     with self.assertRaises(ValueError): import_report({'lighthouseResult':self.report,'loadingExperience':field},'r')
+ def test_invalid_lab_metrics_rejected(self):
+  for value in [-1, False, float('nan'), float('inf'), '100']:
+   self.report['audits']['largest-contentful-paint']['numericValue']=value
+   with self.assertRaises(ValueError): import_report(self.report,'r')
+ def test_field_scope_not_inferred_from_lab_device(self):
+  field={'id':'https://example.com/','metrics':{'LARGEST_CONTENTFUL_PAINT_MS':{'percentile':2000}}}
+  item=import_report({'lighthouseResult':self.report,'loadingExperience':field},'r')['PERF-CWV'][1]
+  self.assertIn('scope=https://example.com/',item['environment'])
+  self.assertIn('device not supplied',item['environment'])
+  self.assertNotIn('mobile',item['environment'])
 if __name__=='__main__': unittest.main()
+
