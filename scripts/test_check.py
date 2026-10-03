@@ -1,6 +1,9 @@
 import json,tempfile,unittest
 from pathlib import Path
 from check import scan_source,load_packs,derive,validate_evidence,release_summary,MAX_BYTES
+from lighthouse_import import import_report
+
+LH_FIXTURE=Path(__file__).parents[1]/'examples'/'lighthouse'/'lighthouse-report.json'
 
 def ev(t,r,kind="tool"):
     return {"type":t,"result":r,"details":"synthetic","observed_at":"2026-09-30T12:00:00Z","environment":"test","producer":{"kind":kind,"name":"test"},"artifact":"fixture"}
@@ -57,4 +60,58 @@ class Tests(unittest.TestCase):
  def test_copy_style_suggestion_only(self):
   p=load_packs(Path(__file__).parents[1])['conversion-copy'];r=next(x for x in p['checks'] if x['id']=='COPY-EMDASH')
   self.assertEqual(r['automation'],'suggestion-only')
+class LighthouseImportTests(unittest.TestCase):
+ def setUp(self): self.report=json.loads(LH_FIXTURE.read_text())
+ def perf_rule(self,rid): return next(x for x in load_packs(Path(__file__).parents[1])['performance']['checks'] if x['id']==rid)
+ def test_records_provenance_and_reference(self):
+  item=import_report(self.report,'lh-run-7')['PERF-CWV'][0]
+  self.assertEqual(item['producer'],{'kind':'external','name':'Lighthouse 12.2.0'})
+  self.assertEqual(item['observed_at'],'2026-09-30T12:20:00.000Z');self.assertEqual(item['reference'],'lh-run-7')
+  self.assertTrue(item['environment'].startswith('lab: mobile'))
+ def test_lab_is_review_never_pass(self):
+  ev=import_report(self.report,'r')
+  for items in ev.values(): self.assertTrue(all(x['result']=='REVIEW' for x in items))
+  self.assertEqual(derive(self.perf_rule('PERF-CWV'),ev['PERF-CWV'])[0],'REVIEW')
+ def test_lab_within_budget_still_review(self):
+  self.report['audits']['largest-contentful-paint']['numericValue']=1200
+  self.assertEqual(import_report(self.report,'r')['PERF-CWV'][0]['result'],'REVIEW')
+ def test_lab_does_not_claim_inp_or_production(self):
+  d=import_report(self.report,'r')['PERF-CWV'][0]['details']
+  self.assertIn('INP cannot be measured in a lab run',d);self.assertIn('not proof of production',d)
+ def test_maps_related_runtime_checks(self):
+  self.assertEqual(set(import_report(self.report,'r')),{'PERF-CWV','PERF-LONGTASKS','PERF-JS-BUDGET','PERF-REQUESTS','PERF-THIRD-PARTY'})
+ def test_missing_audits_are_skipped(self):
+  self.report['audits']={'largest-contentful-paint':{'numericValue':2000}}
+  self.assertEqual(set(import_report(self.report,'r')),{'PERF-CWV'})
+ def test_field_data_labelled_separately(self):
+  psi={'lighthouseResult':self.report,'loadingExperience':{'metrics':{
+   'LARGEST_CONTENTFUL_PAINT_MS':{'percentile':2100},'INTERACTION_TO_NEXT_PAINT':{'percentile':150},'CUMULATIVE_LAYOUT_SHIFT_SCORE':{'percentile':5}}}}
+  lab,field=import_report(psi,'r')['PERF-CWV']
+  self.assertTrue(lab['environment'].startswith('lab:'));self.assertTrue(field['environment'].startswith('field:'))
+  self.assertEqual(field['result'],'PASS');self.assertIn('INP 150 ms',field['details'])
+  self.assertEqual(derive(self.perf_rule('PERF-CWV'),[lab,field])[0],'REVIEW')
+ def test_incomplete_field_data_is_review(self):
+  psi={'lighthouseResult':self.report,'loadingExperience':{'metrics':{'LARGEST_CONTENTFUL_PAINT_MS':{'percentile':2100}}}}
+  self.assertEqual(import_report(psi,'r')['PERF-CWV'][1]['result'],'REVIEW')
+ def test_rejects_non_lighthouse_input(self):
+  with self.assertRaises(ValueError): import_report({'foo':1},'r')
+ def test_fixture_is_sanitized(self):
+  self.assertEqual(self.report['requestedUrl'],'https://example.com/')
+ def test_invalid_field_metrics_rejected(self):
+  for value in [-1, False, True, float('nan'), float('inf'), '100']:
+   for key in ['LARGEST_CONTENTFUL_PAINT_MS','INTERACTION_TO_NEXT_PAINT','CUMULATIVE_LAYOUT_SHIFT_SCORE']:
+    with self.subTest(value=value,key=key):
+     field={'metrics':{key:{'percentile':value}}}
+     with self.assertRaises(ValueError): import_report({'lighthouseResult':self.report,'loadingExperience':field},'r')
+ def test_invalid_lab_metrics_rejected(self):
+  for value in [-1, False, float('nan'), float('inf'), '100']:
+   self.report['audits']['largest-contentful-paint']['numericValue']=value
+   with self.assertRaises(ValueError): import_report(self.report,'r')
+ def test_field_scope_not_inferred_from_lab_device(self):
+  field={'id':'https://example.com/','metrics':{'LARGEST_CONTENTFUL_PAINT_MS':{'percentile':2000}}}
+  item=import_report({'lighthouseResult':self.report,'loadingExperience':field},'r')['PERF-CWV'][1]
+  self.assertIn('scope=https://example.com/',item['environment'])
+  self.assertIn('device not supplied',item['environment'])
+  self.assertNotIn('mobile',item['environment'])
 if __name__=='__main__': unittest.main()
+
